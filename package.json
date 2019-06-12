@@ -22,6 +22,6 @@
     "eslint-plugin-import": "^2.17.3"
   },
   "dependencies": {
-    "babel-eslint": "^10.0.1"
+    "auto-bind": "^2.1.0"
   }
 }

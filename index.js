@@ -1,3 +1,5 @@
+import autoBind from 'auto-bind';
+
 class Particle {
   constructor(x, y) {
     this.x = x;
@@ -10,19 +12,21 @@ class ParticleSimulator {
   constructor(tickTime) {
     this.particles = [];
     this.tickTime = tickTime;
-    setInterval(this.update, this.tickTime);
     this.canvas = document.getElementById('particle-simulator');
     this.canvas.addEventListener('click', this.handleClick);
     this.ctx = this.canvas.getContext('2d');
+
+    autoBind(this);
+    setInterval(this.update, this.tickTime);
   }
 
-  handleClick = (e) => {
+  handleClick(e) {
     const position = this.getMousePosition(e);
     const particle = new Particle(position.x, position.y);
     this.particles.push(particle);
   }
 
-  getMousePosition = (evt) => {
+  getMousePosition(evt) {
     const rect = this.canvas.getBoundingClientRect();
     return {
       x: evt.clientX - rect.left,
@@ -30,18 +34,16 @@ class ParticleSimulator {
     };
   }
 
-  drawParticle = (particle) => {
+  drawParticle(particle) {
     this.ctx.fillStyle = 'rgb(0,0,0)';
     this.ctx.fillRect(particle.x, particle.y, particle.size, particle.size);
   }
 
-  clearCanvas = () => {
+  clearCanvas() {
     this.ctx.clearRect(0, 0, this.canvas.clientWidth, this.canvas.height);
   }
 
-  update = () => {
-    this.clearCanvas();
-
+  update() {
     this.particles = this.particles.map((particle) => {
       const updatedParticle = particle;
       if (updatedParticle.y < this.canvas.height - updatedParticle.size) {
@@ -53,5 +55,4 @@ class ParticleSimulator {
   }
 }
 
-const particleSimulator = new ParticleSimulator(10);
-particleSimulator.update();
+const particleSimulator = new ParticleSimulator(50);
