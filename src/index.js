@@ -1,5 +1,3 @@
-import autoBind from 'auto-bind';
-
 class Particle {
   constructor(x, y) {
     this.x = x;
@@ -10,29 +8,26 @@ class Particle {
 
 class ParticleSimulator {
   constructor(tickTime) {
+    this.handleClick = this.handleClick.bind(this);
+    this.update = this.update.bind(this);
     this.particles = [];
     this.tickTime = tickTime;
     this.canvas = document.getElementById('particle-simulator');
     this.canvas.addEventListener('click', this.handleClick);
     this.ctx = this.canvas.getContext('2d');
 
-    autoBind(this);
     setInterval(this.update, this.tickTime);
   }
 
   handleClick(e) {
-    const position = this.getMousePosition(e);
-    const particle = new Particle(position.x, position.y);
+    const rect = this.canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const particle = new Particle(x, y);
     this.particles.push(particle);
   }
 
-  getMousePosition(evt) {
-    const rect = this.canvas.getBoundingClientRect();
-    return {
-      x: evt.clientX - rect.left,
-      y: evt.clientY - rect.top,
-    };
-  }
 
   drawParticle(particle) {
     this.ctx.fillStyle = 'rgb(0,0,0)';
@@ -44,6 +39,7 @@ class ParticleSimulator {
   }
 
   update() {
+    this.clearCanvas();
     this.particles = this.particles.map((particle) => {
       const updatedParticle = particle;
       if (updatedParticle.y < this.canvas.height - updatedParticle.size) {
