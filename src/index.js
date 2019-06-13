@@ -15,8 +15,14 @@ class ParticleSimulator {
     this.canvas = document.getElementById('particle-simulator');
     this.canvas.addEventListener('click', this.handleClick);
     this.ctx = this.canvas.getContext('2d');
+  }
 
+  start() {
     setInterval(this.update, this.tickTime);
+  }
+
+  stop() {
+    clearInterval(this.update);
   }
 
   handleClick(e) {
@@ -30,19 +36,23 @@ class ParticleSimulator {
 
 
   drawParticle(particle) {
-    this.ctx.fillStyle = 'rgb(0,0,0)';
+    this.ctx.fillStyle = 'white';
     this.ctx.fillRect(particle.x, particle.y, particle.size, particle.size);
   }
 
   clearCanvas() {
-    this.ctx.clearRect(0, 0, this.canvas.clientWidth, this.canvas.height);
+    this.ctx.fillStyle = 'black';
+    this.ctx.fillRect(0, 0, this.canvas.clientWidth, this.canvas.height);
   }
 
   update() {
     this.clearCanvas();
+
     this.particles = this.particles.map((particle) => {
       const updatedParticle = particle;
-      if (updatedParticle.y < this.canvas.height - updatedParticle.size) {
+      const particleBelow = this.particles.find(p => (updatedParticle.x === p.x && updatedParticle.y + 1 === p.y));
+
+      if (!particleBelow && updatedParticle.y < this.canvas.height - updatedParticle.size) {
         updatedParticle.y += 1;
       }
       this.drawParticle(updatedParticle);
@@ -52,3 +62,5 @@ class ParticleSimulator {
 }
 
 const particleSimulator = new ParticleSimulator(50);
+
+particleSimulator.start();
