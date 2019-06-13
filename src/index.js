@@ -3,6 +3,7 @@ class Particle {
     this.x = x;
     this.y = y;
     this.size = 1;
+    this.isActive = true;
   }
 }
 
@@ -11,6 +12,13 @@ class ParticleSimulator {
     this.handleClick = this.handleClick.bind(this);
     this.update = this.update.bind(this);
     this.particles = [];
+    this.matrix = (() => {
+      const arr = [];
+      for (let i = 0; i < 100; i += 1) {
+        arr[i] = [];
+      }
+      return arr;
+    })();
     this.tickTime = tickTime;
     this.canvas = document.getElementById('particle-simulator');
     this.canvas.addEventListener('click', this.handleClick);
@@ -27,11 +35,20 @@ class ParticleSimulator {
 
   handleClick(e) {
     const rect = this.canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
+    let x = Math.floor(e.clientX - rect.left, 10);
+    let y = Math.floor(e.clientY - rect.top, 10);
+    if (x > 99) {
+      x = 99;
+    }
+    if (y > 99) {
+      y = 99;
+    }
+    if (this.matrix[x][y] === true) {
+      return;
+    }
     const particle = new Particle(x, y);
     this.particles.push(particle);
+    this.matrix[x][y] = true;
   }
 
 
@@ -49,11 +66,19 @@ class ParticleSimulator {
     this.clearCanvas();
 
     this.particles = this.particles.map((particle) => {
-      const updatedParticle = particle;
-      const particleBelow = this.particles.find(p => (updatedParticle.x === p.x && updatedParticle.y + 1 === p.y));
+      if (!particle.isActive) {
+        this.drawParticle(particle);
+        return particle;
+      }
 
+      const updatedParticle = particle;
+      const particleBelow = this.matrix[particle.x][particle.y + 1];
       if (!particleBelow && updatedParticle.y < this.canvas.height - updatedParticle.size) {
         updatedParticle.y += 1;
+        this.matrix[updatedParticle.x][updatedParticle.y - 1] = undefined;
+        this.matrix[updatedParticle.x][updatedParticle.y] = true;
+      } else {
+        updatedParticle.isActive = false;
       }
       this.drawParticle(updatedParticle);
       return updatedParticle;
@@ -61,6 +86,6 @@ class ParticleSimulator {
   }
 }
 
-const particleSimulator = new ParticleSimulator(50);
+const particleSimulator = new ParticleSimulator(1);
 
 particleSimulator.start();
