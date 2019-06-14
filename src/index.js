@@ -66,26 +66,50 @@ class ParticleSimulator {
     this.clearCanvas();
 
     this.particles = this.particles.map((particle) => {
-      if (!particle.isActive) {
-        this.drawParticle(particle);
-        return particle;
+      const newParticle = particle;
+      const isThereParticleBelow = this.matrix[newParticle.x][newParticle.y + 1];
+      const isAtTheBottom = !(newParticle.y < this.canvas.height - newParticle.size);
+      const twoParticlesBelowLeft = (this.matrix[newParticle.x - 1][newParticle.y + 1] && this.matrix[newParticle.x - 1][newParticle.y + 2]);
+      const twoParticlesBelowRight = (this.matrix[newParticle.x + 1][newParticle.y + 1] && this.matrix[newParticle.x + 1][newParticle.y + 2]);
+      const isOneSpotAboveBottom = !(newParticle.y < this.canvas.height - newParticle.size - 1);
+      const particleBelowLeft = this.matrix[newParticle.x - 1][newParticle.y + 1];
+      const particleBelowRight = this.matrix[newParticle.x + 1][newParticle.y + 1];
+
+      // Particle is at the bottom of the canvas.
+      if (isAtTheBottom) { newParticle.isActive = false; } else
+      // Particle is not at the bottom and there isn't a particle directly below.
+      if (!isThereParticleBelow) {
+        this.matrix[newParticle.x][newParticle.y] = null;
+        newParticle.y += 1;
+        this.matrix[newParticle.x][newParticle.y] = true;
+      } else
+      // Are there particles one spot below left and two spots below left?
+      if (!isOneSpotAboveBottom) {
+        if (!twoParticlesBelowLeft) {
+          this.matrix[newParticle.x][newParticle.y] = null;
+          newParticle.x -= 1;
+          this.matrix[newParticle.x][newParticle.y] = true;
+        } else if (!twoParticlesBelowRight) {
+          this.matrix[newParticle.x][newParticle.y] = null;
+          newParticle.x += 1;
+          this.matrix[newParticle.x][newParticle.y] = true;
+        }
+      } else if (particleBelowLeft && !particleBelowRight) {
+        this.matrix[newParticle.x][newParticle.y] = null;
+        newParticle.x += 1;
+        this.matrix[newParticle.x][newParticle.y] = true;
+      } else if (particleBelowRight && !particleBelowLeft) {
+        this.matrix[newParticle.x][newParticle.y] = null;
+        newParticle.x -= 1;
+        this.matrix[newParticle.x][newParticle.y] = true;
       }
 
-      const updatedParticle = particle;
-      const particleBelow = this.matrix[particle.x][particle.y + 1];
-      if (!particleBelow && updatedParticle.y < this.canvas.height - updatedParticle.size) {
-        updatedParticle.y += 1;
-        this.matrix[updatedParticle.x][updatedParticle.y - 1] = undefined;
-        this.matrix[updatedParticle.x][updatedParticle.y] = true;
-      } else {
-        updatedParticle.isActive = false;
-      }
-      this.drawParticle(updatedParticle);
-      return updatedParticle;
+      this.drawParticle(newParticle);
+      return newParticle;
     });
   }
 }
 
-const particleSimulator = new ParticleSimulator(1);
+const particleSimulator = new ParticleSimulator(50);
 
 particleSimulator.start();
