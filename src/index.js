@@ -98,6 +98,9 @@ class ParticleSimulator {
       const twoParticlesBelowRight = (particleBelowRight
                                       && this.matrix[newParticle.x + 1][newParticle.y + 2]);
 
+      if (!newParticle.isActive) {
+        // If it's not active, don't do anything.
+      } else
       // Particle is at the bottom of the canvas.
       if (isAtTheBottom) { newParticle.isActive = false; } else
       // Particle is not at the bottom and there isn't a particle directly below.
