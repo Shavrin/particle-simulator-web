@@ -100,13 +100,14 @@ export default class ParticleSimulator {
     const isThereParticleBelow = this.matrix[newParticle.x][newParticle.y + 1];
     const isAtTheBottom = !(newParticle.y < this.canvas.height - newParticle.size);
     const isOneSpotAboveBottom = !(newParticle.y < this.canvas.height - newParticle.size - 1);
-    const particleBelowLeft = this.matrix[newParticle.x - 1][newParticle.y + 1];
-    const particleBelowRight = this.matrix[newParticle.x + 1][newParticle.y + 1];
+    const isOnTheRightSide = newParticle.x === 99;
+    const isOnTheLeftSide = newParticle.x === 0;
+    const particleBelowLeft = isOnTheLeftSide ? false : this.matrix[newParticle.x - 1][newParticle.y + 1];
+    const particleBelowRight = isOnTheRightSide ? false : this.matrix[newParticle.x + 1][newParticle.y + 1];
     const twoParticlesBelowLeft = (particleBelowLeft
                                     && this.matrix[newParticle.x - 1][newParticle.y + 2]);
     const twoParticlesBelowRight = (particleBelowRight
                                     && this.matrix[newParticle.x + 1][newParticle.y + 2]);
-
     if (!newParticle.isActive) {
       // If it's not active, don't do anything.
     } else
@@ -122,8 +123,8 @@ export default class ParticleSimulator {
     // OR
     // Particle isn't one spot above bottom,
     // and there are two spots free to the bottom left.
-    if ((isOneSpotAboveBottom && particleBelowRight && !particleBelowLeft)
-        || (!isOneSpotAboveBottom && !twoParticlesBelowLeft)) {
+    if (((isOneSpotAboveBottom && particleBelowRight && !particleBelowLeft)
+        || (!isOneSpotAboveBottom && !twoParticlesBelowLeft)) && !isOnTheLeftSide) {
       this.moveParticleLeft(newParticle);
     } else
     // Particle is one spot above bottom,
@@ -132,8 +133,8 @@ export default class ParticleSimulator {
     // OR
     // Particle isn't one spot above bottom,
     // and there are two spots free to the bottom right.
-    if ((isOneSpotAboveBottom && !particleBelowRight && particleBelowLeft)
-        || (!isOneSpotAboveBottom && !twoParticlesBelowRight)) {
+    if (((isOneSpotAboveBottom && !particleBelowRight && particleBelowLeft)
+        || (!isOneSpotAboveBottom && !twoParticlesBelowRight)) && !isOnTheRightSide) {
       this.moveParticleRight(newParticle);
     }
     return newParticle;
@@ -143,15 +144,17 @@ export default class ParticleSimulator {
     const newParticle = particle;
     const isThereParticleBelow = this.matrix[newParticle.x][newParticle.y + 1];
     const isAtTheBottom = !(newParticle.y < this.canvas.height - newParticle.size);
-    const rightSpotFree = !this.matrix[newParticle.x + 1][newParticle.y];
-    const leftSpotFree = !this.matrix[newParticle.x - 1][newParticle.y];
+    const isOnTheRightSide = newParticle.x === 99;
+    const isOnTheLeftSide = newParticle.x === 0;
+    const rightSpotFree = isOnTheRightSide ? false : !this.matrix[newParticle.x + 1][newParticle.y];
+    const leftSpotFree = isOnTheLeftSide ? false : !this.matrix[newParticle.x - 1][newParticle.y];
 
     if (isAtTheBottom) {
       if (rightSpotFree && leftSpotFree) {
         this.moveParticleRandomlyLeftRight(newParticle);
       } else if (rightSpotFree && !leftSpotFree) {
         this.moveParticleRight(newParticle);
-      } else if (leftSpotFree && !rightSpotFree) {
+      } else if (leftSpotFree && !rightSpotFree && !isOnTheLeftSide) {
         this.moveParticleLeft(newParticle);
       }
     } else if (!isThereParticleBelow) {
@@ -160,7 +163,7 @@ export default class ParticleSimulator {
       this.moveParticleRandomlyLeftRight(newParticle);
     } else if (!leftSpotFree && rightSpotFree) {
       this.moveParticleRight(newParticle);
-    } else if (leftSpotFree && !rightSpotFree) {
+    } else if (leftSpotFree && !rightSpotFree && !isOnTheLeftSide) {
       this.moveParticleLeft(newParticle);
     }
 
