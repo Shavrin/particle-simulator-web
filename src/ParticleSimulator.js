@@ -102,8 +102,12 @@ export default class ParticleSimulator {
     const isOneSpotAboveBottom = !(newParticle.y < this.canvas.height - newParticle.size - 1);
     const isOnTheRightSide = newParticle.x === 99;
     const isOnTheLeftSide = newParticle.x === 0;
-    const particleBelowLeft = isOnTheLeftSide ? false : this.matrix[newParticle.x - 1][newParticle.y + 1];
-    const particleBelowRight = isOnTheRightSide ? false : this.matrix[newParticle.x + 1][newParticle.y + 1];
+    const particleBelowLeft = isOnTheLeftSide
+      ? false
+      : this.matrix[newParticle.x - 1][newParticle.y + 1];
+    const particleBelowRight = isOnTheRightSide
+      ? false
+      : this.matrix[newParticle.x + 1][newParticle.y + 1];
     const twoParticlesBelowLeft = (particleBelowLeft
                                     && this.matrix[newParticle.x - 1][newParticle.y + 2]);
     const twoParticlesBelowRight = (particleBelowRight

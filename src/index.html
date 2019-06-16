@@ -1,24 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Particle Simulator</title>
 </head>
-<body>
-<canvas id="particle-simulator" width="100" height="100">
-    Canvas is not supported on your browser.
-</canvas>
 
-<style>
-    #particle-simulator {
-        border: 1px solid black;
-        display:flex;
-        margin: 0 auto;
-    }
-    body {
-        background-color: darkslategrey;
-    }
-</style>
+<body>
+    <div class="controlPanel">
+        <button class="sand">SAND</button>
+        <button class="water">WATER</button>
+        <button class="gas">GAS</button>
+    </div>
+
+    <canvas id="particle-simulator" width="100" height="100">
+        Canvas is not supported on your browser.
+    </canvas>
+
+    <style>
+        #particle-simulator {
+            border: 1px solid black;
+            display: flex;
+            margin: 0 auto;
+        }
+
+        body {
+            background-color: darkslategrey;
+            margin: 0;
+            padding: 0;
+        }
+        .controlPanel {
+            background-color: black;
+            display: flex;
+            justify-items: left;
+        }
+        button.sand{
+            background-color: yellow;
+        }
+        button.water{
+            background-color:lightblue;
+        }
+        button.gas {
+            background-color:grey;
+        }
+
+        button.active {
+            background-color: white;
+        }
+    </style>
 </body>
+
 </html>
